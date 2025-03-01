@@ -16,6 +16,10 @@ void divisao(int num1, int num2, float *result){
     *result = num1 / num2;
 }
 
+void printar(float *result){
+    printf("%.2f", *result);
+}
+
 
 int main(){
     int num1, num2, operador;
@@ -47,6 +51,6 @@ int main(){
         default:
         printf("Erro numero invalido");
     }
-    printf("%.2f", result);
+    printar(&result);
     return 0;
 }
