@@ -20,7 +20,6 @@ void printar(float *result){
     printf("%.2f", *result);
 }
 
-
 int main(){
     int num1, num2, operador;
     float result = 0;
