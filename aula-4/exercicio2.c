@@ -1,114 +1,90 @@
 #include <stdio.h>
 #include <string.h>
 
-struct produto {
+typedef struct {
     char nome[50];
-    int quantidade;
-    float preco;
-};
+    int potencia;
+    char marca[50];
+} Carro;
 
-// Funções de comparação
-int compareByPrice(struct produto a, struct produto b) {
-    return (a.preco > b.preco) - (a.preco < b.preco);
+int partition(Carro carros[], int low, int high, int (*compara)(Carro, Carro)) {
+    Carro pivot = carros[high]; // Pivô escolhido
+    int i = low - 1;
+
+    for (int j = low; j < high; j++) {
+        if (compara(carros[j], pivot) < 0) {
+            i++;
+            Carro temp = carros[i];
+            carros[i] = carros[j];
+            carros[j] = temp;
+        }
+    }
+
+    Carro temp = carros[i + 1];
+    carros[i + 1] = carros[high];
+    carros[high] = temp;
+
+    return i + 1;
 }
 
-int compareByQuantity(struct produto a, struct produto b) {
-    return (a.quantidade > b.quantidade) - (a.quantidade < b.quantidade);
+void quickSort(Carro carros[], int low, int high, int (*compara)(Carro, Carro)) {
+    if (low < high) {
+        int pi = partition(carros, low, high, compara);
+        quickSort(carros, low, pi - 1, compara);
+        quickSort(carros, pi + 1, high, compara);
+    }
 }
 
-int compareByName(struct produto a, struct produto b) {
+int compararPorPotencia(Carro a, Carro b) {
+    return a.potencia - b.potencia;
+}
+
+int compararPorNome(Carro a, Carro b) {
     return strcmp(a.nome, b.nome);
 }
 
-// Função de Merge Sort
-void merge(struct produto arr[], int l, int m, int r, int (*compare)(struct produto, struct produto)) {
-    int n1 = m - l + 1;
-    int n2 = r - m;
-
-    struct produto L[n1], R[n2];
-
-    for (int i = 0; i < n1; i++)
-        L[i] = arr[l + i];
-    for (int j = 0; j < n2; j++)
-        R[j] = arr[m + 1 + j];
-
-    int i = 0, j = 0, k = l;
-    while (i < n1 && j < n2) {
-        if (compare(L[i], R[j]) <= 0) {
-            arr[k] = L[i];
-            i++;
-        } else {
-            arr[k] = R[j];
-            j++;
-        }
-        k++;
-    }
-
-    while (i < n1) {
-        arr[k] = L[i];
-        i++;
-        k++;
-    }
-
-    while (j < n2) {
-        arr[k] = R[j];
-        j++;
-        k++;
-    }
-}
-
-void mergeSort(struct produto arr[], int l, int r, int (*compare)(struct produto, struct produto)) {
-    if (l < r) {
-        int m = l + (r - l) / 2;
-
-        mergeSort(arr, l, m, compare);
-        mergeSort(arr, m + 1, r, compare);
-
-        merge(arr, l, m, r, compare);
-    }
-}
-
-void printProdutos(struct produto produtos[], int size) {
-    for (int i = 0; i < size; i++) {
-        printf("Nome: %s, Quantidade: %d, Preço: %.2f\n", produtos[i].nome, produtos[i].quantidade, produtos[i].preco);
-    }
+int compararPorMarca(Carro a, Carro b) {
+    return strcmp(a.marca, b.marca);
 }
 
 int main() {
-    struct produto produtos[] = {
-        {"caderno", 20, 13.99},
-        {"caneta", 23, 1.99},
-        {"garrafa", 40, 43.99},
-        {"cadeira", 13, 683.99},
-        {"mochila", 17, 130.99},
-        {"papel", 34, 3.99},
-        {"cartolina", 58, 3.99},
-        {"marcador", 12, 2.99},
-        {"grampeador", 27, 13.99},
+    Carro carros[5] = {
+        {"Fusion", 175, "Ford"},
+        {"Civic", 158, "Honda"},
+        {"Corolla", 168, "Toyota"},
+        {"Mustang", 450, "Ford"},
+        {"Onix", 116, "Chevrolet"}
     };
-    int size = sizeof(produtos) / sizeof(produtos[0]);
 
-    int choice;
-    printf("Escolha o tipo de ordenação:\n1. Preço\n2. Quantidade\n3. Nome\n");
-    scanf("%d", &choice);
+    int escolha;
+    printf("Bem-vindo ao sistema de ordenação de carros!\n");
+    printf("Escolha o critério para ordenar:\n");
+    printf("1 - Potência\n2 - Nome\n3 - Marca\n");
+    printf("Sua escolha: ");
+    scanf("%d", &escolha);
 
-    switch (choice) {
+    switch (escolha) {
         case 1:
-            mergeSort(produtos, 0, size - 1, compareByPrice);
+            quickSort(carros, 0, 4, compararPorPotencia);
             break;
         case 2:
-            mergeSort(produtos, 0, size - 1, compareByQuantity);
+            quickSort(carros, 0, 4, compararPorNome);
             break;
         case 3:
-            mergeSort(produtos, 0, size - 1, compareByName);
+            quickSort(carros, 0, 4, compararPorMarca);
             break;
         default:
-            printf("Opção inválida!\n");
+            printf("Opção inválida! Tente novamente.\n");
             return 1;
     }
 
-    printf("Produtos ordenados:\n");
-    printProdutos(produtos, size);
+    printf("\nAqui está a lista de carros ordenada:\n");
+    for (int i = 0; i < 5; i++) {
+        printf("Nome: %s, Potência: %d, Marca: %s\n",
+               carros[i].nome, carros[i].potencia, carros[i].marca);
+    }
+
+    printf("Obrigado por usar nosso programa. Até a próxima!\n");
 
     return 0;
 }
