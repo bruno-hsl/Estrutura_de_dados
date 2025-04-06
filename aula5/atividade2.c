@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+
 
 typedef struct Produto {
     char nome[50];
@@ -8,48 +8,46 @@ typedef struct Produto {
     struct Produto *proximo;
 } Produto;
 
-void inserirInicio(Produto **ponta, char *nome, int quantidade) {
-    Produto *novoProduto = (Produto *)malloc(sizeof(Produto));
-    strcpy(novoProduto->nome, nome);
-    novoProduto->quantidade = quantidade;
-    novoProduto->proximo = *ponta;
-    *ponta = novoProduto;
+void inserirInicio(Produto **lista, char *nome, int quantidade) {
+    Produto *novo = malloc(sizeof(Produto));
+    strcpy(novo->nome, nome);
+    novo->quantidade = quantidade;
+    novo->proximo = *lista;
+    *lista = novo;
 }
 
-void inserirFim(Produto **ponta, char *nome, int quantidade) {
-    Produto *novoProduto = (Produto *)malloc(sizeof(Produto));
-    strcpy(novoProduto->nome, nome);
-    novoProduto->quantidade = quantidade;
-    novoProduto->proximo = NULL;
+void inserirFim(Produto **lista, char *nome, int quantidade) {
+    Produto *novo = malloc(sizeof(Produto));
+    strcpy(novo->nome, nome);
+    novo->quantidade = quantidade;
+    novo->proximo = NULL;
 
-    if (*ponta == NULL) {
-        *ponta = novoProduto;
+    if (*lista == NULL) {
+        *lista = novo;
     } else {
-        Produto *temp = *ponta;
+        Produto *temp = *lista;
         while (temp->proximo != NULL) {
             temp = temp->proximo;
         }
-        temp->proximo = novoProduto;
+        temp->proximo = novo;
     }
 }
 
-void imprimirLista(Produto *ponta) {
+void imprimirLista(Produto *lista) {
     printf("Lista de Compras:\n");
-    Produto *temp = ponta;
-    while (temp != NULL) {
-        printf("Produto: %s, Quantidade: %d\n", temp->nome, temp->quantidade);
-        temp = temp->proximo;
+    while (lista != NULL) {
+        printf("Produto: %s, Quantidade: %d\n", lista->nome, lista->quantidade);
+        lista = lista->proximo;
     }
 }
 
 int main() {
-    Produto *lista = NULL; 
+    Produto *lista = NULL;
 
     inserirInicio(&lista, "Arroz", 2);
-    inserirInicio(&lista, "Feijão", 3);
-
+    inserirInicio(&lista, "Feijao", 3);
     inserirFim(&lista, "Leite", 5);
-    inserirFim(&lista, "Macarrão", 4);
+    inserirFim(&lista, "trigo", 4);
 
     imprimirLista(lista);
 
