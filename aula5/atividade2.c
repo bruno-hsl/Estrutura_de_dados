@@ -2,14 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Estrutura para representar um produto na lista de compras
 typedef struct Produto {
     char nome[50];
     int quantidade;
     struct Produto *proximo;
 } Produto;
 
-// Função para inserir um produto no início da lista
 void inserirInicio(Produto **ponta, char *nome, int quantidade) {
     Produto *novoProduto = (Produto *)malloc(sizeof(Produto));
     strcpy(novoProduto->nome, nome);
@@ -18,7 +16,6 @@ void inserirInicio(Produto **ponta, char *nome, int quantidade) {
     *ponta = novoProduto;
 }
 
-// Função para inserir um produto no final da lista
 void inserirFim(Produto **ponta, char *nome, int quantidade) {
     Produto *novoProduto = (Produto *)malloc(sizeof(Produto));
     strcpy(novoProduto->nome, nome);
@@ -36,7 +33,6 @@ void inserirFim(Produto **ponta, char *nome, int quantidade) {
     }
 }
 
-// Função para imprimir a lista de compras
 void imprimirLista(Produto *ponta) {
     printf("Lista de Compras:\n");
     Produto *temp = ponta;
@@ -47,17 +43,14 @@ void imprimirLista(Produto *ponta) {
 }
 
 int main() {
-    Produto *lista = NULL;
+    Produto *lista = NULL; 
 
-    // Inserindo produtos no início da lista
     inserirInicio(&lista, "Arroz", 2);
-    inserirInicio(&lista, "Feijão", 1);
+    inserirInicio(&lista, "Feijão", 3);
 
-    // Inserindo produtos no final da lista
-    inserirFim(&lista, "Macarrão", 3);
-    inserirFim(&lista, "Leite", 4);
+    inserirFim(&lista, "Leite", 5);
+    inserirFim(&lista, "Macarrão", 4);
 
-    // Imprimindo a lista de compras
     imprimirLista(lista);
 
     return 0;
