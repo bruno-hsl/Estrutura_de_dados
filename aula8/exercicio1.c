@@ -1,141 +1,135 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 
-typedef struct {
-    char nome[100];
-    char cpf[20];
-    int gravidade;
+typedef struct Paciente {
+    char nome[30];
+    int CPF;
+    char gravidade[10];
 } Paciente;
 
 typedef struct Node {
-    Paciente data;
-    struct Node *next;
+    Paciente dado;
+    struct Node* proximo;
 } Node;
 
-typedef struct {
-    Node *front;
-    Node *rear;
+typedef struct Queue {
+    Node* frente;
+    Node* tras;
 } Queue;
 
-void initializeQueue(Queue *q) {
-    q->front = NULL;
-    q->rear = NULL;
+Queue* criarFila() {
+    Queue* fila = (Queue*)malloc(sizeof(Queue));
+    fila->frente = fila->tras = NULL;
+    return fila;
 }
 
-bool isEmpty(Queue *q) {
-    return q->front == NULL;
-}
+void enqueue(Queue* fila, Paciente paciente) {
+    Node* novoNode = (Node*)malloc(sizeof(Node));
+    novoNode->dado = paciente;
+    novoNode->proximo = NULL;
 
-void enqueue(Queue *q, Paciente p) {
-    Node *newNode = (Node*) malloc(sizeof(Node));
-    newNode->data = p;
-    newNode->next = NULL;
-
-    if (isEmpty(q)) {
-        q->front = newNode;
-        q->rear = newNode;
+    if (fila->tras == NULL) {
+        fila->frente = fila->tras = novoNode;
     } else {
-        q->rear->next = newNode;
-        q->rear = newNode;
+        fila->tras->proximo = novoNode;
+        fila->tras = novoNode;
     }
-
-    printf("Paciente enfileirado: %s (Gravidade: %d)\n", p.nome, p.gravidade);
 }
 
-Paciente dequeue(Queue *q) {
-    Paciente vazio = {"", "", -1};
-
-    if (isEmpty(q)) {
-        printf("Erro: a fila está vazia!\n");
+Paciente dequeue(Queue* fila) {
+    if (fila->frente == NULL) {
+        printf("A fila está vazia!\n");
+        Paciente vazio = {"", 0, ""};
         return vazio;
     }
 
-    Node *temp = q->front;
-    Paciente value = temp->data;
-    q->front = q->front->next;
+    Node* temp = fila->frente;
+    Paciente paciente = temp->dado;
+    fila->frente = fila->frente->proximo;
 
-    free(temp);
-    if (q->front == NULL) {
-        q->rear = NULL;
+    if (fila->frente == NULL) {
+        fila->tras = NULL;
     }
 
-    return value;
+    free(temp);
+    return paciente;
 }
 
-void printQueue(Queue *q) {
-    if (isEmpty(q)) {
-        printf("Fila vazia.\n");
+int isEmpty(Queue* fila) {
+    return fila->frente == NULL;
+}
+
+void imprimirFila(Queue* fila, char* nomeFila) {
+    printf("\nPacientes na fila %s:\n", nomeFila);
+
+    if (isEmpty(fila)) {
+        printf("A fila está vazia!\n");
         return;
     }
 
-    Node *current = q->front;
-    while (current != NULL) {
-        printf("- %s (CPF: %s, Gravidade: %d)\n", current->data.nome, current->data.cpf, current->data.gravidade);
-        current = current->next;
+    Node* atual = fila->frente;
+    while (atual != NULL) {
+        Paciente paciente = atual->dado;
+        printf("Nome: %s | CPF: %d | Gravidade: %s\n",
+               paciente.nome, paciente.CPF, paciente.gravidade);
+        atual = atual->proximo;
     }
 }
 
-void freeQueue(Queue *q) {
-    Node *current = q->front;
-    Node *next;
-    while (current != NULL) {
-        next = current->next;
-        free(current);
-        current = next;
+void liberarFila(Queue* fila) {
+    while (!isEmpty(fila)) {
+        dequeue(fila);
     }
-    q->front = NULL;
-    q->rear = NULL;
+    free(fila);
 }
 
 int main() {
-    Queue emergencia, uti, triagem;
-    initializeQueue(&emergencia);
-    initializeQueue(&uti);
-    initializeQueue(&triagem);
+    Queue* filaVerde = criarFila();
+    Queue* filaAmarela = criarFila();
+    Queue* filaVermelha = criarFila();
 
-    int n;
-    printf("Quantos pacientes deseja cadastrar? ");
-    scanf("%d", &n);
-    getchar();
+    int opcao;
 
-    for (int i = 0; i < n; i++) {
-        Paciente p;
-        printf("\nPaciente %d:\n", i + 1);
+    for (int i = 0; i < 3; i++) {
+        Paciente paciente;
+
         printf("Nome: ");
-        fgets(p.nome, sizeof(p.nome), stdin);
-        p.nome[strcspn(p.nome, "\n")] = '\0';
+        scanf(" %[^\n]", paciente.nome);
+
         printf("CPF: ");
-        fgets(p.cpf, sizeof(p.cpf), stdin);
-        p.cpf[strcspn(p.cpf, "\n")] = '\0';
-        printf("Gravidade (0-10): ");
-        scanf("%d", &p.gravidade);
-        getchar(); 
+        scanf("%d", &paciente.CPF);
 
-        enqueue(&emergencia, p);
+        do {
+            printf("gravidade do paciente:\n1 - Verde\n2 - Amarelo\n3 - Vermelho\nOpção: ");
+            scanf("%d", &opcao);
+
+            switch (opcao) {
+                case 1:
+                    strcpy(paciente.gravidade, "Verde");
+                    enqueue(filaVerde, paciente);
+                    break;
+                case 2:
+                    strcpy(paciente.gravidade, "Amarelo");
+                    enqueue(filaAmarela, paciente);
+                    break;
+                case 3:
+                    strcpy(paciente.gravidade, "Vermelho");
+                    enqueue(filaVermelha, paciente);
+                    break;
+                default:
+                    printf("Opção invalida!n");
+            }
+        } while (opcao < 1 || opcao > 3);
     }
 
+    imprimirFila(filaVerde, "Verde");
+    imprimirFila(filaAmarela, "Amarela");
+    imprimirFila(filaVermelha, "Vermelha");
 
-    printf("\nProcessando fila de emergência...\n");
-    while (!isEmpty(&emergencia)) {
-        Paciente p = dequeue(&emergencia);
-        if (p.gravidade >= 8) {
-            enqueue(&uti, p);
-        } else {
-            enqueue(&triagem, p);
-        }
-    }
-
-    printf("\n🛌 Fila UTI:\n");
-    printQueue(&uti);
-
-    printf("\n🩺 Fila Triagem:\n");
-    printQueue(&triagem);
-
-    freeQueue(&emergencia);
-    freeQueue(&uti);
-    freeQueue(&triagem);
+    liberarFila(filaVerde);
+    liberarFila(filaAmarela);
+    liberarFila(filaVermelha);
 
     return 0;
 }
