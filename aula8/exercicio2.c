@@ -128,7 +128,7 @@ int main() {
                 Operacao removida = pop(&historico);
                 printf("Última operação removida: %d %c %d\n", removida.num1, removida.operador, removida.num2);
 
-                // Recalcular o resultado final
+            
                 Node *temp = historico.top;
                 resultadoFinal = 0;
                 while (temp != NULL) {
