@@ -2,20 +2,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Estrutura para armazenar os dados de um corredor
 typedef struct {
     char nome[50];
     float tempo;
 } Corredor;
 
-// Nó da árvore binária
 struct Node {
     Corredor corredor;
     struct Node *left;
     struct Node *right;
 };
 
-// Cria um novo nó com os dados do corredor
 struct Node* createNode(Corredor c) {
     struct Node* newNode = (struct Node*) malloc(sizeof(struct Node));
     newNode->corredor = c;
@@ -24,24 +21,20 @@ struct Node* createNode(Corredor c) {
     return newNode;
 }
 
-// Insere um corredor na árvore com base no tempo de corte
-// Classificados (tempo < corte) vão para a direita
-// Não classificados (tempo >= corte) vão para a esquerda
 struct Node* insert(struct Node* root, Corredor c, float tempo_corte) {
     if (root == NULL) {
         return createNode(c);
     }
 
     if (c.tempo < tempo_corte) {
-        root->right = insert(root->right, c, tempo_corte); // classificados
+        root->right = insert(root->right, c, tempo_corte);
     } else {
-        root->left = insert(root->left, c, tempo_corte); // não classificados
+        root->left = insert(root->left, c, tempo_corte);
     }
 
     return root;
 }
 
-// Percorre e imprime os corredores classificados (lado direito da árvore)
 void mostrarClassificados(struct Node* root, float tempo_corte) {
     if (root == NULL) return;
 
@@ -54,7 +47,6 @@ void mostrarClassificados(struct Node* root, float tempo_corte) {
     mostrarClassificados(root->left, tempo_corte);
 }
 
-// Libera toda a memória usada pela árvore
 void liberarArvore(struct Node* root) {
     if (root == NULL) return;
     liberarArvore(root->left);
@@ -62,7 +54,6 @@ void liberarArvore(struct Node* root) {
     free(root);
 }
 
-// Função principal
 int main() {
     struct Node* root = NULL;
     int n;
@@ -74,7 +65,7 @@ int main() {
     for (int i = 0; i < n; i++) {
         Corredor c;
         printf("\nNome do corredor %d: ", i + 1);
-        scanf(" %[^\n]", c.nome); // lê nome com espaços
+        scanf(" %[^\n]", c.nome);
 
         printf("Tempo do corredor %d (em segundos): ", i + 1);
         scanf("%f", &c.tempo);

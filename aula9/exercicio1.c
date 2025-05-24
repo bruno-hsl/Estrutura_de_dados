@@ -2,14 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Definição do nó da árvore
 struct Node {
     int data;
     struct Node *left;
     struct Node *right;
 };
 
-// Criação de um novo nó
 struct Node* createNode(int data) {
     struct Node* newNode = (struct Node*) malloc(sizeof(struct Node));
     newNode->data = data;
@@ -18,7 +16,6 @@ struct Node* createNode(int data) {
     return newNode;
 }
 
-// Inserção ordenada (BST)
 struct Node* insertNode(struct Node* root, int data) {
     if (root == NULL) {
         return createNode(data);
@@ -28,10 +25,9 @@ struct Node* insertNode(struct Node* root, int data) {
     } else if (data > root->data) {
         root->right = insertNode(root->right, data);
     }
-    return root;  // ignora duplicatas
+    return root; 
 }
 
-// Percurso in-order
 void inorderTraversal(struct Node* root) {
     if (root != NULL) {
         inorderTraversal(root->left);
@@ -40,7 +36,6 @@ void inorderTraversal(struct Node* root) {
     }
 }
 
-// Impressão visual da árvore
 void printTreeUtil(struct Node* root, int space) {
     if (root == NULL) return;
 
@@ -57,16 +52,15 @@ void printTreeUtil(struct Node* root, int space) {
 }
 
 void printTree(struct Node* root) {
-    printf("\nEstrutura da Árvore Binária:\n");
+    printf("\nEstrutura da arvore Binaria:\n");
     printTreeUtil(root, 0);
 }
 
-// Busca com caminho
 int searchWithPath(struct Node* root, int target, char* path) {
     if (root == NULL) return 0;
 
     if (root->data == target) {
-        printf("Caminho até %d: %s -> %d\n", target, path, target);
+        printf("Caminho ate %d: %s -> %d\n", target, path, target);
         return 1;
     }
 
@@ -80,7 +74,6 @@ int searchWithPath(struct Node* root, int target, char* path) {
     return 0;
 }
 
-// Liberação de memória
 void freeTree(struct Node* root) {
     if (root == NULL) return;
     freeTree(root->left);
@@ -88,28 +81,23 @@ void freeTree(struct Node* root) {
     free(root);
 }
 
-// Função principal
 int main() {
     struct Node* root = NULL;
 
-    // Inserindo valores na árvore
     int valores[] = {4, 2, 6, 1, 3, 5, 7, 6};
     int n = sizeof(valores) / sizeof(valores[0]);
     for (int i = 0; i < n; i++) {
         root = insertNode(root, valores[i]);
     }
 
-    // Mostra percurso in-order
-    printf("Percorrendo a árvore (in-order): ");
+    printf("Percorrendo a arvore: ");
     inorderTraversal(root);
     printf("\n");
 
-    // Mostra visualização da árvore
     printTree(root);
 
-    // Busca por um valor
     int buscar;
-    printf("Digite um número que deseja buscar na árvore: ");
+    printf("Digite um número que deseja buscar na arvore: ");
     scanf("%d", &buscar);
 
     char path[100] = "Raiz";
@@ -121,7 +109,6 @@ int main() {
         printf("\nValor %d encontrado!\n", buscar);
     }
 
-    // Libera memória
     freeTree(root);
 
     return 0;
